@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require 'czech'
 
-Czech::Cli.new.run
+Czech::Cli.new(ARGV[0] || '/usr/share/dict/words').run

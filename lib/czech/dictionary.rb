@@ -1,30 +1,15 @@
 require 'levenshtein'
 
 class Czech::Dictionary
-  VOWELS = %W[a e i o u].freeze
-
-  attr_accessor :dict
+  attr_reader :dict
 
   def initialize(words)
     @dict = {}
-    words.each do |word|
-      @dict[self.class.hash(word)] ||= []
-      @dict[self.class.hash(word)] << word
-    end
-  end
-    
-  def self.hash(word)
-    previous_char = nil
-    word.split('').collect do |char|
-      char = VOWELS.include?(char.downcase) ? 'a' : char.downcase
-      unless previous_char == char
-        previous_char = char
-      end
-    end.compact.join
+    words.each { |word| add word }
   end
 
   def suggest(word)
-    if suggestions = dict[self.class.hash word]
+    if suggestions = dict[Czech::Hasher.generate word]
       find_best word, suggestions
     else
       "NO SUGGESTION"
@@ -32,6 +17,12 @@ class Czech::Dictionary
   end
 
 private
+
+  def add(word)
+    dict[Czech::Hasher.generate word] ||= []
+    dict[Czech::Hasher.generate word] << word
+  end
+
   def find_best(word, suggestions)
     if suggestions.include?(word)
       word

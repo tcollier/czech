@@ -1,9 +1,9 @@
 class Czech::Cli
   attr_reader :dict
 
-  def initialize
-    puts "Loading the system dictionary..."
-    words = File.read('/usr/share/dict/words').split
+  def initialize(file_name)
+    puts "Loading the system dictionary, this may take a several seconds..."
+    words = File.read(file_name).split
     @dict = Czech::Dictionary.new(words)
   end
 
