@@ -1,5 +1,5 @@
 class Czech::Dictionary
-  VOWELS = "aeiou"
+  VOWELS = %W[a e i o u].freeze
 
   attr_accessor :dict
 
@@ -10,9 +10,19 @@ class Czech::Dictionary
       @dict[self.class.hash(word)] << word
     end
   end
+    
+  def self.hash(word)
+    previous_char = nil
+    word.split('').collect do |char|
+      char = VOWELS.include?(char.downcase) ? 'a' : char.downcase
+      unless previous_char == char
+        previous_char = char
+      end
+    end.compact.join
+  end
 
   def suggest(word)
-    if (suggestions = dict[self.class.hash word]).any?
+    if suggestions = dict[self.class.hash word]
       if suggestions.include?(word)
         word
       elsif index = suggestions.map(&:downcase).find_index(word.downcase)
@@ -23,17 +33,5 @@ class Czech::Dictionary
     else
       "NO SUGGESTION"
     end
-  end
-    
-  def self.hash(word)
-    previous_char = nil
-    word.split.collect do |char|
-      if VOWELS.split.include?(char)
-        char = 'a'
-      end
-      unless previous_char == char
-        previous_char = char
-      end
-    end.compact.join
   end
 end
