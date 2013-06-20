@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'czech'
+
+Czech::Cli.new.run
