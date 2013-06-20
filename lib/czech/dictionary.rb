@@ -1,3 +1,5 @@
+require 'levenshtein'
+
 class Czech::Dictionary
   VOWELS = %W[a e i o u].freeze
 
@@ -23,15 +25,26 @@ class Czech::Dictionary
 
   def suggest(word)
     if suggestions = dict[self.class.hash word]
-      if suggestions.include?(word)
-        word
-      elsif index = suggestions.map(&:downcase).find_index(word.downcase)
-        suggestions[index]
-      else
-        suggestions.first
-      end
+      find_best word, suggestions
     else
       "NO SUGGESTION"
     end
+  end
+
+private
+  def find_best(word, suggestions)
+    if suggestions.include?(word)
+      word
+    elsif index = suggestions.map(&:downcase).find_index(word.downcase)
+      suggestions[index]
+    else
+      nearest word, suggestions
+    end
+  end
+
+  def nearest(word, suggestions)
+    dists = suggestions.collect { |w| Levenshtein.distance(word.downcase, w.downcase) }
+    index_of_min_dist = dists.index(dists.min)
+    suggestions[index_of_min_dist]
   end
 end
