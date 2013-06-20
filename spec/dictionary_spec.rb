@@ -132,5 +132,12 @@ describe Czech::Dictionary do
         subject.suggest('weke').should == 'wake'
       end
     end
+
+    context "other interesting cases" do
+      it "suggests 'sheep' instead of 'shap' for 'sheeeeep'" do
+        subject = Czech::Dictionary.new(['shap', 'sheep'])
+        subject.suggest('sheeeeep').should == 'sheep'
+      end
+    end
   end
 end
